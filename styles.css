@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - FULLSCREEN RESPONSIVE UI
+   CRYSTAL PARCHEESI STAR - FULLSCREEN & UI SCREENS FIX
    ========================================================================== */
 
 * {
@@ -20,9 +20,9 @@ html, body {
   color: #ffffff;
 }
 
-/* 1. Fullscreen WebGL Canvas */
+/* 1. Fullscreen WebGL Canvas (Background) */
 #webgl-canvas {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
@@ -31,18 +31,66 @@ html, body {
   display: block;
 }
 
-/* 2. HUD Game Layer */
+/* 2. UI Overlay Screens */
+.screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #0b0e14;
+}
+
 #game-screen {
-  position: absolute;
+  background: transparent !important;
+  pointer-events: none;
+  z-index: 10;
+  justify-content: space-between;
+}
+
+/* Buttons and Typography */
+.game-title {
+  font-size: 2.2rem;
+  text-align: center;
+  color: #00f0ff;
+  margin-bottom: 15px;
+  text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+}
+
+.btn-primary {
+  padding: 16px 40px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff007f, #7928ca);
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.5);
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.top-bar {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  z-index: 10;
-  pointer-events: none;
+  padding: 15px 20px;
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+  z-index: 200;
+  background: rgba(11, 14, 20, 0.8);
+  backdrop-filter: blur(5px);
 }
 
 .game-hud {
@@ -53,13 +101,11 @@ html, body {
 
 .turn-indicator {
   display: inline-block;
-  background: rgba(11, 14, 20, 0.85);
-  padding: 12px 28px;
-  border-radius: 25px;
+  background: rgba(11, 14, 20, 0.9);
+  padding: 10px 25px;
+  border-radius: 20px;
   color: #00f0ff;
   font-weight: bold;
-  font-size: 1.1rem;
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 240, 255, 0.4);
   pointer-events: auto;
 }
