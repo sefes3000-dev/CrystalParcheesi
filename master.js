@@ -6,7 +6,10 @@ import { ProfileManager } from './scripts/profile/ProfileManager.js';
 import { InventoryManager } from './scripts/inventory/InventoryManager.js';
 import { ShopManager } from './scripts/shop/ShopManager.js';
 import { ThreeManager } from './scripts/three/ThreeManager.js';
-import { Showroom3D } from './scripts/three/Showroom3D.js';
+import { BoardBuilder3D } from './scripts/board/BoardBuilder3D.js';
+import { Pawn3D } from './scripts/board/Pawn3D.js';
+import { Dice3D } from './scripts/board/Dice3D.js';
+import { PLAYER_COLORS } from './scripts/board/BoardConfig.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Crystal Parcheesi STAR Engine Initializing...');
@@ -16,17 +19,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   const inventoryManager = new InventoryManager(profileManager);
   const shopManager = new ShopManager(profileManager, inventoryManager);
 
-  // 2. Initialize 3D Graphics Engine
+  // 2. Initialize 3D Graphics Engine & Board
   const canvas3D = document.getElementById('webgl-canvas');
   let threeManager = null;
-  let showroom3D = null;
+  let boardBuilder = null;
+  let dice3D = null;
+  const pawns = [];
 
   if (canvas3D) {
     threeManager = new ThreeManager(canvas3D);
     threeManager.init();
-    showroom3D = new Showroom3D(threeManager);
-    showroom3D.buildPlatform();
-    showroom3D.loadSampleMesh('dice');
+
+    // Build 3D Board
+    boardBuilder = new BoardBuilder3D(threeManager.scene);
+    boardBuilder.buildBoard();
+
+    // Create 3D Dice
+    dice3D = new Dice3D(threeManager.scene);
+
+    // Create Sample Pawns in Nests
+    const pawnPositions = [
+      { id: 'red_1', color: PLAYER_COLORS.RED, pos: { x: -5.5, y: 0.3, z: -5.5 } },
+      { id: 'green_1', color: PLAYER_COLORS.GREEN, pos: { x: 5.5, y: 0.3, z: -5.5 } },
+      { id: 'yellow_1', color: PLAYER_COLORS.YELLOW, pos: { x: 5.5, y: 0.3, z: 5.5 } },
+      { id: 'blue_1', color: PLAYER_COLORS.BLUE, pos: { x: -5.5, y: 0.3, z: 5.5 } }
+    ];
+
+    pawnPositions.forEach(p => {
+      const pawn = new Pawn3D(p.id, p.color, p.pos);
+      threeManager.scene.add(pawn.mesh);
+      pawns.push(pawn);
+    });
   }
 
   // UI Elements
@@ -72,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Step 2: Load Shop Catalog
     setTimeout(async () => {
       loadingBar.style.width = '70%';
-      loadingStatus.innerText = 'Loading Shop Database...';
+      loadingStatus.innerText = 'Loading Shop Database & 3D Assets...';
       await shopManager.loadShopData();
 
       // Step 3: Complete & Start 3D Render Loop
@@ -85,13 +108,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           switchScreen(loadingScreen, homeScreen);
           topBar.style.display = 'flex';
 
-          if (threeManager && showroom3D) {
-            threeManager.startRenderLoop(() => {
-              showroom3D.update();
-            });
+          if (threeManager) {
+            threeManager.startRenderLoop();
           }
 
-          console.log('✅ Phase 2 Data & 3D Engine Ready. Profile:', profile);
+          console.log('✅ Phase 3 Complete: 3D Board, Pawns & Dice Ready!');
         }, 400);
       }, 400);
     }, 400);
