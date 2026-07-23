@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - MASTER BOOTSTRAP SCRIPT
+   CRYSTAL PARCHEESI STAR - MASTER BOOTSTRAP SCRIPT (PRODUCTION RELEASE)
    ========================================================================== */
 
 import { ProfileManager } from './scripts/profile/ProfileManager.js';
@@ -14,8 +14,13 @@ import { TurnManager } from './scripts/game/TurnManager.js';
 import { GameSession, GAME_MODES } from './scripts/game/GameSession.js';
 import { AudioManager } from './scripts/audio/AudioManager.js';
 
+// Global Error Handler
+window.addEventListener('error', (e) => {
+  console.error('⚠️ Unhandled Exception:', e.message);
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🚀 Crystal Parcheesi STAR Engine Initializing...');
+  console.log('🚀 Crystal Parcheesi STAR Engine Initializing (Production Mode)...');
 
   // 1. Initialize System Managers & Audio Engine
   const profileManager = new ProfileManager();
@@ -95,20 +100,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function startLoadingSequence() {
     // Step 1: Load Profile & Inventory
     loadingBar.style.width = '30%';
-    loadingStatus.innerText = 'Loading Player Profile & Inventory...';
+    loadingStatus.innerText = 'Loading Profile & Local Data...';
     const profile = await profileManager.init();
     inventoryManager.init();
 
     // Step 2: Load Shop & Audio Engine
     setTimeout(async () => {
       loadingBar.style.width = '70%';
-      loadingStatus.innerText = 'Initializing Audio Engine & Bot Logic...';
+      loadingStatus.innerText = 'Optimizing Engine & Bot Logic...';
       await shopManager.loadShopData();
 
       // Step 3: Complete & Start 3D Render Loop
       setTimeout(() => {
         loadingBar.style.width = '100%';
-        loadingStatus.innerText = 'Ready!';
+        loadingStatus.innerText = 'Welcome!';
 
         setTimeout(() => {
           updateTopBarUI(profile);
@@ -122,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           // Enable Interactive Gameplay & Turn Loop
           setupGameplayInteractions();
 
-          console.log('✅ Phase 6 Complete: Synthesized Audio Engine Activated!');
+          console.log('🏆 Crystal Parcheesi STAR v1.0.0 Fully Operational!');
         }, 400);
       }, 400);
     }, 400);
@@ -144,7 +149,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function handleTurnExecution(playerColor) {
     if (dice3D.isRolling) return;
 
-    // Play dice roll sound
     audioManager.playDiceRoll();
 
     const randomRoll = Math.floor(Math.random() * 6) + 1;
