@@ -5,6 +5,8 @@
 import { ProfileManager } from './scripts/profile/ProfileManager.js';
 import { InventoryManager } from './scripts/inventory/InventoryManager.js';
 import { ShopManager } from './scripts/shop/ShopManager.js';
+import { ThreeManager } from './scripts/three/ThreeManager.js';
+import { Showroom3D } from './scripts/three/Showroom3D.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Crystal Parcheesi STAR Engine Initializing...');
@@ -13,6 +15,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const profileManager = new ProfileManager();
   const inventoryManager = new InventoryManager(profileManager);
   const shopManager = new ShopManager(profileManager, inventoryManager);
+
+  // 2. Initialize 3D Graphics Engine
+  const canvas3D = document.getElementById('webgl-canvas');
+  let threeManager = null;
+  let showroom3D = null;
+
+  if (canvas3D) {
+    threeManager = new ThreeManager(canvas3D);
+    threeManager.init();
+    showroom3D = new Showroom3D(threeManager);
+    showroom3D.buildPlatform();
+    showroom3D.loadSampleMesh('dice');
+  }
 
   // UI Elements
   const splashScreen = document.getElementById('splash-screen');
@@ -48,8 +63,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function startLoadingSequence() {
-    let progress = 0;
-    
     // Step 1: Load Profile & Inventory
     loadingBar.style.width = '30%';
     loadingStatus.innerText = 'Loading Player Profile & Inventory...';
@@ -62,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       loadingStatus.innerText = 'Loading Shop Database...';
       await shopManager.loadShopData();
 
-      // Step 3: Complete
+      // Step 3: Complete & Start 3D Render Loop
       setTimeout(() => {
         loadingBar.style.width = '100%';
         loadingStatus.innerText = 'Ready!';
@@ -71,7 +84,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           updateTopBarUI(profile);
           switchScreen(loadingScreen, homeScreen);
           topBar.style.display = 'flex';
-          console.log('✅ Phase 1 Data Systems Ready. Profile:', profile);
+
+          if (threeManager && showroom3D) {
+            threeManager.startRenderLoop(() => {
+              showroom3D.update();
+            });
+          }
+
+          console.log('✅ Phase 2 Data & 3D Engine Ready. Profile:', profile);
         }, 400);
       }, 400);
     }, 400);
