@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#080b10">
+  <title>Crystal Parcheesi STAR</title>
+  
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- WebGL Rendering Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- User Interface Layer -->
+    <div id="ui-layer">
+      
+      <!-- Top Resource Bar -->
+      <div id="top-bar" class="top-bar glass-panel" style="display: none;">
+        <div class="user-info">
+          <span id="player-avatar">👤</span>
+          <span id="player-flag">🏳️</span>
+          <span id="player-name">Player</span>
+        </div>
+        <div class="resource-group">
+          <div class="resource-pill">🪙 <span id="coin-count">5,000</span></div>
+          <div class="resource-pill">💎 <span id="gem-count">0</span></div>
+        </div>
+      </div>
+
+      <!-- 1. Splash Screen -->
+      <div id="splash-screen" class="ui-screen active">
+        <h1 class="gold-text" style="font-size: 2.5rem; margin-bottom: 8px;">CRYSTAL</h1>
+        <h2 style="font-size: 1.5rem; letter-spacing: 4px; color: var(--crystal-blue);">PARCHEESI STAR</h2>
+        <div style="margin-top: 40px; font-size: 0.9rem; color: var(--text-muted);">Tap anywhere to start</div>
+      </div>
+
+      <!-- 2. Loading Screen -->
+      <div id="loading-screen" class="ui-screen">
+        <h2 class="gold-text">Loading Assets...</h2>
+        <div class="progress-container">
+          <div id="loading-bar" class="progress-bar"></div>
+        </div>
+        <div id="loading-status" style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">Initializing Engine...</div>
+      </div>
+
+      <!-- 3. Home Screen -->
+      <div id="home-screen" class="ui-screen">
+        <div class="glass-panel" style="padding: 24px; text-align: center; width: 90%; max-width: 400px;">
+          <h2 class="gold-text" style="margin-bottom: 20px;">MAIN MENU</h2>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button id="btn-play" class="btn-primary glow-effect">🎮 PLAY NOW</button>
+            <button id="btn-shop" class="btn-primary" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;">🛒 SHOP</button>
+            <button id="btn-inventory" class="btn-primary" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;">🎒 INVENTORY</button>
+            <button id="btn-profile" class="btn-primary" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;">👤 PROFILE</button>
+            <button id="btn-settings" class="btn-primary" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;">⚙️ SETTINGS</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Main Bootstrap JavaScript Engine -->
+  <script type="module" src="master.js"></script>
+</body>
+</html>
