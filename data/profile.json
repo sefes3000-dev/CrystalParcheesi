@@ -1,0 +1,36 @@
+{
+  "username": "Player",
+  "country": "US",
+  "avatar": "avatar_default_1",
+  "level": 1,
+  "xp": 0,
+  "stars": 0,
+  "coins": 5000,
+  "gems": 0,
+  "rank": "Bronze I",
+  "stats": {
+    "matchesPlayed": 0,
+    "wins": 0,
+    "losses": 0,
+    "classicWins": 0,
+    "quickWins": 0,
+    "onlineWins": 0,
+    "offlineWins": 0,
+    "botWins": 0,
+    "captures": 0,
+    "piecesHome": 0,
+    "totalDiceRolls": 0,
+    "totalReRolls": 0,
+    "flowersSent": 0,
+    "flowersReceived": 0
+  },
+  "loadout": {
+    "dice": "dice_classic",
+    "pawns": "pawn_classic",
+    "frame": "frame_classic",
+    "character": "default_king",
+    "flowers": "flower_rose",
+    "emojis": "pack_basic"
+  },
+  "creationDate": "2026-07-23"
+}
