@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - Phase 4: Parchisi Rule Engine & Turn System Completed
+### Added
+- Core Parchisi rule verification module for safe zones, pawn release, captures, and bonus turns (`GameRules.js`).
+- Dynamic turn state controller managing turn order, roll state, and 3 consecutive 6s penalty (`TurnManager.js`).
+- Interactive dice rolling click trigger mapped to rule engine processing inside `master.js`.
+
 ## [0.4.0] - Phase 3: 3D Parchisi Board, Pawns & Dice Engine Completed
 ### Added
 - Complete Parchisi board grid map and player color constants (`BoardConfig.js`).
