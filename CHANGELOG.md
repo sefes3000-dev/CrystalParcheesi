@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - Phase 3: 3D Parchisi Board, Pawns & Dice Engine Completed
+### Added
+- Complete Parchisi board grid map and player color constants (`BoardConfig.js`).
+- Procedural 3D Parchisi Board generator with wooden base, crystal surface, and corner nests (`BoardBuilder3D.js`).
+- Dynamic 3D Pawn generator with arc-jumping animation system (`Pawn3D.js`).
+- Realistic 3D rolling physics and rotation-snapping Dice simulator (`Dice3D.js`).
+- Integrated board, dice, and pawns initialization loop into `master.js`.
+
 ## [0.3.0] - Phase 2: Three.js Graphics Engine & 3D Showroom Completed
 ### Added
 - Central decoupled event management bus (`EventBus.js`).
