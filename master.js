@@ -1,109 +1,81 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - COMPLETE 3D BOARD & CAMERA SETUP
+   CRYSTAL PARCHEESI STAR - FIXED NAVIGATION & 3D SYSTEM
    ========================================================================== */
 
-console.log('⚡ Starting Complete 3D Board Setup...');
+import { ThreeManager } from './scripts/three/ThreeManager.js';
+import { BoardBuilder3D } from './scripts/board/BoardBuilder3D.js';
+import { Pawn3D } from './scripts/board/Pawn3D.js';
+import { Dice3D } from './scripts/board/Dice3D.js';
+import { PLAYER_COLORS } from './scripts/board/BoardConfig.js';
 
-let scene, camera, renderer;
-
-function init3D() {
-  const canvas = document.getElementById('webgl-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
-
-  // 1. Scene & Camera Setup
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0b0e14); // خلفية سوداء كريستالية لمنع الأبيض
-
-  const aspect = window.innerWidth / window.innerHeight;
-  camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-  
-  // تعديل زاوية الكاميرا لترى الرقعة كاملة بحجم مثالي للموبايل
-  camera.position.set(0, 22, 18);
-  camera.lookAt(0, -1, 0);
-
-  // 2. Renderer
-  renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  // 3. Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-  scene.add(ambientLight);
-
-  const dirLight = new THREE.DirectionalLight(0xffd700, 1.2);
-  dirLight.position.set(10, 25, 10);
-  scene.add(dirLight);
-
-  // 4. Create Parcheesi Board Base
-  const boardGroup = new THREE.Group();
-
-  // Base Plate (الرقعة الخشبية/الداكنة الأساسية)
-  const baseGeo = new THREE.BoxGeometry(16, 0.4, 16);
-  const baseMat = new THREE.MeshStandardMaterial({ color: 0x1e272e, roughness: 0.3 });
-  const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-  boardGroup.add(baseMesh);
-
-  // Four Corner Bases (المنازل الأربعة)
-  const corners = [
-    { x: -5, z: -5, color: 0xff4757 }, // أحمر
-    { x: 5, z: -5, color: 0x2ed573 },  // أخضر
-    { x: 5, z: 5, color: 0xffa502 },   // أصفر
-    { x: -5, z: 5, color: 0x1e90ff }   // أزرق
-  ];
-
-  corners.forEach(c => {
-    const geo = new THREE.BoxGeometry(5.5, 0.5, 5.5);
-    const mat = new THREE.MeshStandardMaterial({ color: c.color, roughness: 0.2 });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(c.x, 0.1, c.z);
-    boardGroup.add(mesh);
+function switchScreen(activeId) {
+  const screens = ['splash-screen', 'loading-screen', 'home-screen', 'game-screen'];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = (id === activeId) ? 'flex' : 'none';
+    }
   });
+}
 
-  // Cross Tracks Placeholder (المسار الأوسط)
-  const trackGeo = new THREE.BoxGeometry(15, 0.45, 4.5);
-  const trackMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
-  const trackH = new THREE.Mesh(trackGeo, trackMat);
-  const trackV = trackH.clone();
-  trackV.rotation.y = Math.PI / 2;
-  boardGroup.add(trackH);
-  boardGroup.add(trackV);
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 App Loaded successfully.');
 
-  // Center Dice Box (منطقة النرد الوسطى)
-  const centerGeo = new THREE.BoxGeometry(3.5, 0.6, 3.5);
-  const centerMat = new THREE.MeshStandardMaterial({ color: 0x2f3542 });
-  const centerMesh = new THREE.Mesh(centerGeo, centerMat);
-  boardGroup.add(centerMesh);
+  let threeManager = null;
 
-  // Center Dice (النرد في المنتصف)
-  const diceGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
-  const diceMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 });
-  const diceMesh = new THREE.Mesh(diceGeo, diceMat);
-  diceMesh.position.set(0, 1.1, 0);
-  diceMesh.rotation.set(0.4, 0.5, 0.2);
-  boardGroup.add(diceMesh);
+  // Initialize 3D Engine in background
+  const canvas = document.getElementById('webgl-canvas');
+  if (canvas) {
+    try {
+      threeManager = new ThreeManager(canvas);
+      threeManager.init();
 
-  scene.add(boardGroup);
+      const boardBuilder = new BoardBuilder3D(threeManager.scene);
+      boardBuilder.buildBoard();
 
-  // 5. Render Loop
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+      new Dice3D(threeManager.scene);
+
+      const pawns = [
+        { id: 'r1', color: PLAYER_COLORS.RED, pos: { x: -5.5, y: 0.3, z: -5.5 } },
+        { id: 'g1', color: PLAYER_COLORS.GREEN, pos: { x: 5.5, y: 0.3, z: -5.5 } },
+        { id: 'y1', color: PLAYER_COLORS.YELLOW, pos: { x: 5.5, y: 0.3, z: 5.5 } },
+        { id: 'b1', color: PLAYER_COLORS.BLUE, pos: { x: -5.5, y: 0.3, z: 5.5 } }
+      ];
+
+      pawns.forEach(p => {
+        const pawn = new Pawn3D(p.id, p.color, p.pos);
+        threeManager.scene.add(pawn.mesh);
+      });
+
+      threeManager.startRenderLoop();
+    } catch (e) {
+      console.error('❌ Failed to load 3D world:', e);
+    }
   }
-  animate();
 
-  window.addEventListener('resize', onWindowResize);
-}
+  // 1. Splash Screen Action
+  const splash = document.getElementById('splash-screen');
+  if (splash) {
+    splash.onclick = () => {
+      switchScreen('loading-screen');
+      setTimeout(() => {
+        switchScreen('home-screen');
+        const topBar = document.getElementById('top-bar');
+        if (topBar) topBar.style.display = 'flex';
+      }, 500);
+    };
+  }
 
-function onWindowResize() {
-  if (!camera || !renderer) return;
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
+  // 2. Play Now Button Action
+  const playBtn = document.getElementById('btn-play-now');
+  if (playBtn) {
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
+      switchScreen('game-screen');
 
-// Start immediately
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  init3D();
-} else {
-  document.addEventListener('DOMContentLoaded', init3D);
-}
+      if (threeManager) {
+        threeManager.onWindowResize();
+      }
+    };
+  }
+});
