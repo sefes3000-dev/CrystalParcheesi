@@ -12,15 +12,17 @@ import { Dice3D } from './scripts/board/Dice3D.js';
 import { PLAYER_COLORS } from './scripts/board/BoardConfig.js';
 import { GameRules } from './scripts/game/GameRules.js';
 import { TurnManager } from './scripts/game/TurnManager.js';
+import { GameSession, GAME_MODES } from './scripts/game/GameSession.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Crystal Parcheesi STAR Engine Initializing...');
 
-  // 1. Initialize System Managers
+  // 1. Initialize System Managers & Game Session
   const profileManager = new ProfileManager();
   const inventoryManager = new InventoryManager(profileManager);
   const shopManager = new ShopManager(profileManager, inventoryManager);
   const turnManager = new TurnManager();
+  const gameSession = new GameSession(GAME_MODES.OFFLINE_BOTS);
 
   // 2. Initialize 3D Graphics Engine & Board
   const canvas3D = document.getElementById('webgl-canvas');
@@ -98,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Step 2: Load Shop Catalog
     setTimeout(async () => {
       loadingBar.style.width = '70%';
-      loadingStatus.innerText = 'Loading Game Logic & Rule Engine...';
+      loadingStatus.innerText = 'Initializing Bot AI & Offline Session...';
       await shopManager.loadShopData();
 
       // Step 3: Complete & Start 3D Render Loop
@@ -115,35 +117,59 @@ document.addEventListener('DOMContentLoaded', async () => {
             threeManager.startRenderLoop();
           }
 
-          // Enable Interactive Dice Roll Test on Click
-          setupDiceInteraction();
+          // Enable Interactive Gameplay & Turn Loop
+          setupGameplayInteractions();
 
-          console.log('✅ Phase 4 Complete: Parchisi Rule Engine & Turn System Active!');
+          console.log('✅ Phase 5 Complete: Bot AI & Session Management Operational!');
         }, 400);
       }, 400);
     }, 400);
   }
 
-  function setupDiceInteraction() {
+  function setupGameplayInteractions() {
     if (!canvas3D || !dice3D) return;
 
     canvas3D.addEventListener('click', async () => {
-      if (dice3D.isRolling) return;
-
-      const randomRoll = Math.floor(Math.random() * 6) + 1;
       const currentPlayer = turnManager.getCurrentPlayer();
 
-      console.log(`🎲 ${currentPlayer} is rolling the dice...`);
-      const rollResult = await dice3D.roll(randomRoll);
-      const turnResult = turnManager.processRoll(rollResult);
-
-      console.log(`🎯 Rolled: ${rollResult} | Result: ${turnResult.action}`);
-
-      if (turnResult.action === 'MOVE_NORMAL' || turnResult.action === 'FORFEIT') {
-        turnManager.nextTurn();
-      } else if (turnResult.action === 'MOVE_AND_BONUS') {
-        console.log(`🎉 Bonus Turn for ${currentPlayer}!`);
+      // Player turn
+      if (!gameSession.isBotTurn(currentPlayer) && !dice3D.isRolling) {
+        await handleTurnExecution(currentPlayer);
       }
     });
+  }
+
+  async function handleTurnExecution(playerColor) {
+    if (dice3D.isRolling) return;
+
+    const randomRoll = Math.floor(Math.random() * 6) + 1;
+    console.log(`🎲 ${playerColor} is rolling...`);
+
+    const rollResult = await dice3D.roll(randomRoll);
+    const turnResult = turnManager.processRoll(rollResult);
+
+    console.log(`🎯 Rolled: ${rollResult} | Result: ${turnResult.action}`);
+
+    let nextPlayer = playerColor;
+    if (turnResult.action === 'MOVE_NORMAL' || turnResult.action === 'FORFEIT') {
+      nextPlayer = turnManager.nextTurn();
+    } else if (turnResult.action === 'MOVE_AND_BONUS') {
+      console.log(`🎉 Bonus Turn for ${playerColor}!`);
+    }
+
+    // Trigger Bot turn automatically if next player is a Bot
+    if (gameSession.isBotTurn(nextPlayer)) {
+      triggerBotTurn(nextPlayer);
+    }
+  }
+
+  async function triggerBotTurn(botColor) {
+    const botAI = gameSession.getBotInstance(botColor);
+    if (!botAI) return;
+
+    console.log(`🤖 Bot (${botColor}) is thinking...`);
+    await botAI.simulateThinkingTime(1000, 2000);
+
+    await handleTurnExecution(botColor);
   }
 });
