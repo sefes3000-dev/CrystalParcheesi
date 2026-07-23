@@ -10,19 +10,20 @@ import { BoardBuilder3D } from './scripts/board/BoardBuilder3D.js';
 import { Pawn3D } from './scripts/board/Pawn3D.js';
 import { Dice3D } from './scripts/board/Dice3D.js';
 import { PLAYER_COLORS } from './scripts/board/BoardConfig.js';
-import { GameRules } from './scripts/game/GameRules.js';
 import { TurnManager } from './scripts/game/TurnManager.js';
 import { GameSession, GAME_MODES } from './scripts/game/GameSession.js';
+import { AudioManager } from './scripts/audio/AudioManager.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Crystal Parcheesi STAR Engine Initializing...');
 
-  // 1. Initialize System Managers & Game Session
+  // 1. Initialize System Managers & Audio Engine
   const profileManager = new ProfileManager();
   const inventoryManager = new InventoryManager(profileManager);
   const shopManager = new ShopManager(profileManager, inventoryManager);
   const turnManager = new TurnManager();
   const gameSession = new GameSession(GAME_MODES.OFFLINE_BOTS);
+  const audioManager = new AudioManager();
 
   // 2. Initialize 3D Graphics Engine & Board
   const canvas3D = document.getElementById('webgl-canvas');
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Transition from Splash to Loading
   splashScreen.addEventListener('click', () => {
+    audioManager.playClick();
     switchScreen(splashScreen, loadingScreen);
     startLoadingSequence();
   });
@@ -97,10 +99,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const profile = await profileManager.init();
     inventoryManager.init();
 
-    // Step 2: Load Shop Catalog
+    // Step 2: Load Shop & Audio Engine
     setTimeout(async () => {
       loadingBar.style.width = '70%';
-      loadingStatus.innerText = 'Initializing Bot AI & Offline Session...';
+      loadingStatus.innerText = 'Initializing Audio Engine & Bot Logic...';
       await shopManager.loadShopData();
 
       // Step 3: Complete & Start 3D Render Loop
@@ -120,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           // Enable Interactive Gameplay & Turn Loop
           setupGameplayInteractions();
 
-          console.log('✅ Phase 5 Complete: Bot AI & Session Management Operational!');
+          console.log('✅ Phase 6 Complete: Synthesized Audio Engine Activated!');
         }, 400);
       }, 400);
     }, 400);
@@ -141,6 +143,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function handleTurnExecution(playerColor) {
     if (dice3D.isRolling) return;
+
+    // Play dice roll sound
+    audioManager.playDiceRoll();
 
     const randomRoll = Math.floor(Math.random() * 6) + 1;
     console.log(`🎲 ${playerColor} is rolling...`);
