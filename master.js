@@ -10,6 +10,8 @@ import { BoardBuilder3D } from './scripts/board/BoardBuilder3D.js';
 import { Pawn3D } from './scripts/board/Pawn3D.js';
 import { Dice3D } from './scripts/board/Dice3D.js';
 import { PLAYER_COLORS } from './scripts/board/BoardConfig.js';
+import { GameRules } from './scripts/game/GameRules.js';
+import { TurnManager } from './scripts/game/TurnManager.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Crystal Parcheesi STAR Engine Initializing...');
@@ -18,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const profileManager = new ProfileManager();
   const inventoryManager = new InventoryManager(profileManager);
   const shopManager = new ShopManager(profileManager, inventoryManager);
+  const turnManager = new TurnManager();
 
   // 2. Initialize 3D Graphics Engine & Board
   const canvas3D = document.getElementById('webgl-canvas');
@@ -95,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Step 2: Load Shop Catalog
     setTimeout(async () => {
       loadingBar.style.width = '70%';
-      loadingStatus.innerText = 'Loading Shop Database & 3D Assets...';
+      loadingStatus.innerText = 'Loading Game Logic & Rule Engine...';
       await shopManager.loadShopData();
 
       // Step 3: Complete & Start 3D Render Loop
@@ -112,9 +115,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             threeManager.startRenderLoop();
           }
 
-          console.log('✅ Phase 3 Complete: 3D Board, Pawns & Dice Ready!');
+          // Enable Interactive Dice Roll Test on Click
+          setupDiceInteraction();
+
+          console.log('✅ Phase 4 Complete: Parchisi Rule Engine & Turn System Active!');
         }, 400);
       }, 400);
     }, 400);
+  }
+
+  function setupDiceInteraction() {
+    if (!canvas3D || !dice3D) return;
+
+    canvas3D.addEventListener('click', async () => {
+      if (dice3D.isRolling) return;
+
+      const randomRoll = Math.floor(Math.random() * 6) + 1;
+      const currentPlayer = turnManager.getCurrentPlayer();
+
+      console.log(`🎲 ${currentPlayer} is rolling the dice...`);
+      const rollResult = await dice3D.roll(randomRoll);
+      const turnResult = turnManager.processRoll(rollResult);
+
+      console.log(`🎯 Rolled: ${rollResult} | Result: ${turnResult.action}`);
+
+      if (turnResult.action === 'MOVE_NORMAL' || turnResult.action === 'FORFEIT') {
+        turnManager.nextTurn();
+      } else if (turnResult.action === 'MOVE_AND_BONUS') {
+        console.log(`🎉 Bonus Turn for ${currentPlayer}!`);
+      }
+    });
   }
 });
