@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - THREE.JS ENGINE MANAGER (SAFE RENDER LOOP FIX)
+   CRYSTAL PARCHEESI STAR - THREE.JS ENGINE MANAGER (SAFE INITIALIZATION)
    ========================================================================== */
 
 export class ThreeManager {
@@ -14,60 +14,72 @@ export class ThreeManager {
 
   init() {
     if (!this.canvas) {
-      console.error('❌ ThreeManager: Canvas element is missing or null!');
-      return;
+      console.error('❌ ThreeManager Error: Canvas element #webgl-canvas missing from DOM!');
+      return false;
     }
 
-    // 1. Scene Setup
-    this.scene = new THREE.Scene();
+    // Safety check for THREE library loaded from CDN
+    if (typeof THREE === 'undefined') {
+      console.error('❌ ThreeManager Error: THREE library not detected in window scope!');
+      return false;
+    }
 
-    // 2. Camera Setup
-    const width = window.innerWidth || 300;
-    const height = window.innerHeight || 300;
-    const fov = 45;
-    const aspect = width / height;
+    try {
+      // 1. Scene Setup
+      this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
-    this.camera.position.set(0, 15, 20);
-    this.camera.lookAt(0, 0, 0);
+      // 2. Camera Setup
+      const width = window.innerWidth || 300;
+      const height = window.innerHeight || 300;
+      const fov = 45;
+      const aspect = width / height;
 
-    // 3. Renderer Setup (Mobile Optimized)
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    
-    this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
+      this.camera.position.set(0, 15, 20);
+      this.camera.lookAt(0, 0, 0);
 
-    // 4. Lighting Setup
-    this.setupLighting();
+      // 3. Renderer Setup
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: this.canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
 
-    // 5. Initial Render Force (Render initial frame before animation loop starts)
-    this.renderFrame();
+      this.renderer.setSize(width, height);
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // 6. Handle Resize
-    window.addEventListener('resize', () => this.onWindowResize());
+      // 4. Lighting
+      this.setupLighting();
 
-    console.log('💎 Three.js WebGL Engine Initialized Successfully.');
+      // 5. Initial Frame Render
+      this.renderFrame();
+
+      // 6. Window Resize Handler
+      window.addEventListener('resize', () => this.onWindowResize());
+
+      console.log('💎 Three.js Engine successfully initialized.');
+      return true;
+    } catch (err) {
+      console.error('❌ Exception during ThreeManager.init():', err);
+      return false;
+    }
   }
 
   setupLighting() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     this.scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffd700, 1.2); // Golden Directional Light
+    const dirLight = new THREE.DirectionalLight(0xffd700, 1.2);
     dirLight.position.set(10, 20, 10);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
     this.scene.add(dirLight);
 
-    const pointLight = new THREE.PointLight(0x00f2fe, 1, 30); // Crystal Blue Accent Light
+    const pointLight = new THREE.PointLight(0x00f2fe, 1, 30);
     pointLight.position.set(-10, 10, -10);
     this.scene.add(pointLight);
   }
@@ -79,8 +91,7 @@ export class ThreeManager {
   }
 
   startRenderLoop(updateCallback = null) {
-    if (this.isRendering) return; // Prevent duplicate requestAnimationFrame loops
-    
+    if (this.isRendering) return;
     this.isRendering = true;
 
     const animate = () => {
@@ -90,7 +101,7 @@ export class ThreeManager {
         try {
           updateCallback();
         } catch (err) {
-          console.error('⚠️ Error in render updateCallback:', err);
+          console.error('⚠️ Error inside render loop updateCallback:', err);
         }
       }
 
@@ -121,6 +132,6 @@ export class ThreeManager {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(width, height);
-    this.renderFrame(); // Instantly update view frame on resize
+    this.renderFrame();
   }
 }
