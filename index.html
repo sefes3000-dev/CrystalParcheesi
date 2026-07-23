@@ -4,10 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Crystal Parcheesi STAR 3D</title>
-  <link rel="stylesheet" href="styles.css">
   
-  <!-- Three.js CDN Integration -->
+  <!-- 1. Eruda Mobile Dev Console (Development Mode Auto-Load) -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    if (typeof eruda !== 'undefined') {
+      eruda.init();
+      console.log('🛠️ Eruda Mobile Developer Console Active');
+    }
+  </script>
+
+  <!-- 2. Three.js Engine Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -53,7 +63,7 @@
     </div>
   </div>
 
-  <!-- 4. Game HUD Screen (Playable Board Layer) -->
+  <!-- 4. Game HUD Screen -->
   <div id="game-screen" class="screen" style="display: none;">
     <div class="game-hud">
       <div class="turn-indicator" id="turn-indicator">Your Turn (Red)</div>
@@ -61,7 +71,7 @@
     </div>
   </div>
 
-  <!-- Master Logic Bootstrap Entry Point -->
+  <!-- Master Script Bootstrap Entry Point -->
   <script type="module" src="master.js"></script>
 </body>
 </html>
