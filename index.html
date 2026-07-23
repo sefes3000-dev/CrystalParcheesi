@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,60 +7,50 @@
   
   <!-- Eruda Mobile Dev Console -->
   <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-  <script>
-    if (typeof eruda !== 'undefined') {
-      eruda.init();
-      console.log('🛠️ Eruda Active');
-    }
-    
-    // التقاط أي خطأ في تحميل السكريبتات فوراً
-    window.addEventListener('error', function(e) {
-      console.error('❌ Direct Script Load Error:', e.message || e);
-    }, true);
-  </script>
+  <script>if (typeof eruda !== 'undefined') eruda.init();</script>
 
-  <!-- Three.js Engine Library -->
+  <!-- Three.js Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- WebGL Canvas Context -->
+  <!-- WebGL 3D Canvas Context -->
   <canvas id="webgl-canvas"></canvas>
 
   <!-- Top Bar -->
   <div id="top-bar" class="top-bar" style="display: none;">
     <div class="user-profile">👤 <span id="player-name">Player</span></div>
-    <div class="resources">🪙 <span id="coin-count">0</span></div>
+    <div class="resources">🪙 <span id="coin-count">1000</span></div>
   </div>
 
   <!-- 1. Splash Screen -->
-  <div id="splash-screen" class="screen" style="display: flex;">
-    <div class="splash-content">
-      <h1 class="game-title">CRYSTAL PARCHEESI<br><span>STAR 3D</span></h1>
-      <p style="font-size: 1.2rem; color: #00f0ff; margin-top: 20px;">اضغط في أي مكان للبدء 🎲</p>
-    </div>
+  <div id="splash-screen" class="screen">
+    <h1 class="game-title">CRYSTAL PARCHEESI<br><span>STAR 3D</span></h1>
+    <p style="font-size: 1.1rem; color: #aaa; margin-top: 15px;">اضغط في أي مكان للبدء 🎲</p>
   </div>
 
   <!-- 2. Loading Screen -->
   <div id="loading-screen" class="screen" style="display: none;">
-    <h2>جاري التحميل...</h2>
+    <h2 style="color: #00f0ff;">جاري تحميل المحرك...</h2>
   </div>
 
   <!-- 3. Main Menu Screen -->
   <div id="home-screen" class="screen" style="display: none;">
+    <h2 style="margin-bottom: 25px;">القائمة الرئيسية</h2>
     <button id="btn-play-now" class="btn-primary">إبدأ اللعب الآن 🎲</button>
   </div>
 
-  <!-- 4. 3D Game Screen -->
+  <!-- 4. Game Screen (HUD) -->
   <div id="game-screen" class="screen" style="display: none;">
+    <div></div>
     <div class="game-hud">
-      <div class="turn-indicator">رقعة اللعب 3D جاهزة!</div>
+      <div class="turn-indicator">دورك الآن (الأحمر)</div>
     </div>
   </div>
 
-  <!-- Master Entry Script with fallback onerror logging -->
-  <script src="./master.js" onerror="console.error('❌ Failed to load ./master.js! Check if file exists in root directory.')"></script>
+  <!-- Master Script Loader -->
+  <script type="module" src="./master.js"></script>
 </body>
 </html>
