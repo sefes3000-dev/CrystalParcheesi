@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - Phase 6: Audio Engine & Sound Effects Completed
+### Added
+- Synthesized audio generator using Web Audio API (`AudioManager.js`).
+- Interactive sound effects for UI clicks, dice rolling, and pawn step movements.
+- Seamless audio trigger integration inside `master.js` for player and bot actions.
+
 ## [0.6.0] - Phase 5: Bot AI & Online/Offline Session Logic Completed
 ### Added
 - Rule-based Bot AI decision engine with simulated thinking delays (`BotAI.js`).
