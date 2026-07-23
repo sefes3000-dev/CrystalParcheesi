@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - MASTER BOOTSTRAP SCRIPT (CRITICAL BUG FIX)
+   CRYSTAL PARCHEESI STAR - MASTER BOOTSTRAP SCRIPT (DEBUGGED FLOW)
    ========================================================================== */
 
 import { ProfileManager } from './scripts/profile/ProfileManager.js';
@@ -14,15 +14,14 @@ import { TurnManager } from './scripts/game/TurnManager.js';
 import { GameSession, GAME_MODES } from './scripts/game/GameSession.js';
 import { AudioManager } from './scripts/audio/AudioManager.js';
 
-// Catch and display global errors to prevent silent freezes
 window.addEventListener('error', (e) => {
-  console.error('⚠️ Global Exception Caught:', e.message, 'at', e.filename, 'line:', e.lineno);
+  console.error('⚠️ Global Error Boundary:', e.message, 'at', e.filename, 'line:', e.lineno);
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🚀 Crystal Parcheesi STAR Engine Initializing (Debug Mode)...');
+  console.log('🚀 Initializing Crystal Parcheesi STAR Sequence...');
 
-  // 1. Initialize System Managers
+  // 1. Systems Initialization
   const profileManager = new ProfileManager();
   const inventoryManager = new InventoryManager(profileManager);
   const shopManager = new ShopManager(profileManager, inventoryManager);
@@ -30,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const gameSession = new GameSession(GAME_MODES.OFFLINE_BOTS);
   const audioManager = new AudioManager();
 
-  // 2. Initialize 3D Graphics Engine
+  // 2. 3D Engine Initialization
   const canvas3D = document.getElementById('webgl-canvas');
   let threeManager = null;
   let boardBuilder = null;
@@ -60,13 +59,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         pawns.push(pawn);
       });
 
-      console.log('✅ Three.js WebGL Scene & Pawns successfully built.');
+      console.log('✅ 3D Board, Pawns & Physics Engine ready.');
     } catch (err) {
-      console.error('❌ Failed to initialize 3D Scene:', err);
+      console.error('❌ Failed to construct Three.js Scene:', err);
     }
   }
 
-  // UI Elements Reference
+  // UI Screen References
   const splashScreen = document.getElementById('splash-screen');
   const loadingScreen = document.getElementById('loading-screen');
   const homeScreen = document.getElementById('home-screen');
@@ -75,151 +74,113 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loadingBar = document.getElementById('loading-bar');
   const loadingStatus = document.getElementById('loading-status');
 
-  // Resource Displays
-  const coinCountDisplay = document.getElementById('coin-count');
-  const gemCountDisplay = document.getElementById('gem-count');
-  const playerNameDisplay = document.getElementById('player-name');
+  // Step Switch Helper
+  function transitionScreen(fromScreen, toScreen, displayType = 'flex') {
+    if (fromScreen) {
+      fromScreen.classList.remove('active');
+      setTimeout(() => {
+        fromScreen.style.display = 'none';
+      }, 300);
+    }
 
-  // Splash Screen Trigger
+    if (toScreen) {
+      toScreen.style.display = displayType;
+      setTimeout(() => {
+        toScreen.classList.add('active');
+      }, 50);
+    }
+  }
+
+  // STEP 1: Splash Screen Click
   if (splashScreen) {
     splashScreen.addEventListener('click', () => {
       audioManager.playClick();
-      hideScreen(splashScreen);
-      showScreen(loadingScreen);
-      startLoadingSequence();
+      transitionScreen(splashScreen, loadingScreen);
+      runLoadingSequence();
     });
   }
 
-  function hideScreen(screen) {
-    if (!screen) return;
-    screen.classList.remove('active');
-    screen.style.display = 'none';
-  }
-
-  function showScreen(screen, displayType = 'flex') {
-    if (!screen) return;
-    screen.style.display = displayType;
-    setTimeout(() => {
-      screen.classList.add('active');
-    }, 50);
-  }
-
-  function updateTopBarUI(profile) {
-    if (!profile) return;
-    if (coinCountDisplay) coinCountDisplay.innerText = profile.coins.toLocaleString();
-    if (gemCountDisplay) gemCountDisplay.innerText = profile.gems.toLocaleString();
-    if (playerNameDisplay) playerNameDisplay.innerText = profile.username || 'Player';
-  }
-
-  async function startLoadingSequence() {
-    if (loadingBar) loadingBar.style.width = '30%';
-    if (loadingStatus) loadingStatus.innerText = 'Loading Profile & Assets...';
+  // STEP 2: Loading Sequence -> Main Menu
+  async function runLoadingSequence() {
+    if (loadingBar) loadingBar.style.width = '35%';
+    if (loadingStatus) loadingStatus.innerText = 'Loading Profile Data...';
     
-    const profile = await profileManager.init();
+    await profileManager.init();
     inventoryManager.init();
 
     if (loadingBar) loadingBar.style.width = '70%';
-    if (loadingStatus) loadingStatus.innerText = 'Initializing AI & Game Systems...';
+    if (loadingStatus) loadingStatus.innerText = 'Preparing 3D Assets & AI...';
     await shopManager.loadShopData();
 
     if (loadingBar) loadingBar.style.width = '100%';
-    if (loadingStatus) loadingStatus.innerText = 'Ready!';
+    if (loadingStatus) loadingStatus.innerText = 'Complete!';
 
     setTimeout(() => {
-      hideScreen(loadingScreen);
-      showScreen(homeScreen);
+      transitionScreen(loadingScreen, homeScreen);
       if (topBar) topBar.style.display = 'flex';
 
       if (threeManager) {
         threeManager.startRenderLoop();
       }
 
-      // Bind all Play buttons on the Main Menu
-      setupPlayNowNavigation();
-    }, 300);
+      bindPlayNowButton();
+    }, 400);
   }
 
-  /**
-   * Universal Navigation Handler for "PLAY NOW"
-   */
-  function setupPlayNowNavigation() {
-    // Queries all possible selectors for Play buttons in Main Menu
-    const playButtons = document.querySelectorAll('#btn-play-now, .play-btn, .btn-play, .mode-card, [data-action="play"]');
+  // STEP 3: Main Menu -> STEP 4: 3D Game Board
+  function bindPlayNowButton() {
+    const playBtn = document.getElementById('btn-play-now') || document.querySelector('.play-btn');
 
-    const handlePlayAction = (e) => {
-      if (e) {
+    if (playBtn) {
+      playBtn.onclick = (e) => {
         e.preventDefault();
-        e.stopPropagation();
-      }
+        console.log('🎮 PLAY NOW Clicked -> Launching 3D Board Viewport!');
+        audioManager.playClick();
 
-      console.log('🎮 PLAY NOW Triggered! Transitioning to 3D Game Board...');
-      audioManager.playClick();
+        // Hide Main Menu
+        transitionScreen(homeScreen, gameScreen, 'block');
 
-      // 1. Hide Home Screen
-      hideScreen(homeScreen);
-
-      // 2. Display Game HUD Screen
-      showScreen(gameScreen, 'block');
-
-      // 3. Ensure WebGL Canvas is forced visible and active
-      if (canvas3D) {
-        canvas3D.style.display = 'block';
-        canvas3D.style.visibility = 'visible';
-        canvas3D.style.zIndex = '10';
+        // Force WebGL Canvas view update
         if (threeManager) {
           threeManager.onWindowResize();
         }
-      }
 
-      // 4. Start Game Session
-      gameSession.startSession();
-
-      // 5. Attach interaction listener for rolling dice & moving
-      setupGameplayInteractions();
-    };
-
-    if (playButtons.length > 0) {
-      playButtons.forEach(btn => {
-        btn.addEventListener('click', handlePlayAction);
-      });
-    } else {
-      console.warn('⚠️ No explicit Play buttons found. Adding fallback listener to home-screen.');
-      if (homeScreen) {
-        homeScreen.addEventListener('click', (e) => {
-          if (e.target.closest('button') || e.target.closest('.mode-card')) {
-            handlePlayAction(e);
-          }
-        });
-      }
+        // Start session logic & listeners
+        gameSession.startSession();
+        enableBoardInteraction();
+      };
     }
   }
 
-  let isTurnInProgress = false;
+  let isExecuting = false;
 
-  function setupGameplayInteractions() {
+  function enableBoardInteraction() {
     if (!canvas3D || !dice3D) return;
 
-    canvas3D.onclick = async () => {
-      if (isTurnInProgress || dice3D.isRolling) return;
+    window.onclick = async (e) => {
+      // Ignore clicks on HUD overlay elements
+      if (e.target.closest('#top-bar') || e.target.closest('.game-hud')) return;
+
+      if (isExecuting || dice3D.isRolling) return;
 
       const currentPlayer = turnManager.getCurrentPlayer();
 
       if (!gameSession.isBotTurn(currentPlayer)) {
-        isTurnInProgress = true;
-        await handleTurnExecution(currentPlayer);
-        isTurnInProgress = false;
+        isExecuting = true;
+        await executeTurnCycle(currentPlayer);
+        isExecuting = false;
       }
     };
   }
 
-  async function handleTurnExecution(playerColor) {
+  async function executeTurnCycle(playerColor) {
     try {
       audioManager.playDiceRoll();
 
-      const randomRoll = Math.floor(Math.random() * 6) + 1;
-      console.log(`🎲 ${playerColor} is rolling... Result: ${randomRoll}`);
+      const rollVal = Math.floor(Math.random() * 6) + 1;
+      console.log(`🎲 ${playerColor} Rolled: ${rollVal}`);
 
-      const rollResult = await dice3D.roll(randomRoll);
+      const rollResult = await dice3D.roll(rollVal);
       const turnResult = turnManager.processRoll(rollResult);
 
       let nextPlayer = playerColor;
@@ -228,20 +189,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (gameSession.isBotTurn(nextPlayer)) {
-        await triggerBotTurn(nextPlayer);
+        await executeBotCycle(nextPlayer);
       }
     } catch (err) {
-      console.error('❌ Error executing turn:', err);
+      console.error('❌ Turn Execution Exception:', err);
     }
   }
 
-  async function triggerBotTurn(botColor) {
+  async function executeBotCycle(botColor) {
     const botAI = gameSession.getBotInstance(botColor);
     if (!botAI) return;
 
     console.log(`🤖 Bot (${botColor}) thinking...`);
-    await botAI.simulateThinkingTime(1000, 1500);
+    await botAI.simulateThinkingTime(800, 1400);
 
-    await handleTurnExecution(botColor);
+    await executeTurnCycle(botColor);
   }
 });
