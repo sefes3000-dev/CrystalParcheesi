@@ -1,102 +1,105 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - DIRECT TOUCH-READY BOOTSTRAP
+   CRYSTAL PARCHEESI STAR - DIRECT EMERGENCY BOOTSTRAP
    ========================================================================== */
 
-console.log('⚡ Direct Touch Bootstrap Executing...');
+console.log('⚡ Direct Script Executing Successfully!');
 
-// Attach event support for both Click & Touch on mobile
-function bindTouchAction(elementId, callback) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-
-  const handler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log(`👉 Event triggered on #${elementId}`);
-    callback(e);
-  };
-
-  el.addEventListener('click', handler, { passive: false });
-  el.addEventListener('touchstart', handler, { passive: false });
-}
-
-function switchScreen(hideId, showId, displayMode = 'flex') {
-  const hideEl = document.getElementById(hideId);
-  const showEl = document.getElementById(showId);
-
-  if (hideEl) hideEl.style.display = 'none';
-  if (showEl) showEl.style.display = displayMode;
-}
-
-async function startApp() {
-  console.log('🚀 DOM Ready, initializing Three.js...');
-
-  let threeManager = null;
-
-  try {
-    const { ThreeManager } = await import('./scripts/three/ThreeManager.js');
-    const { BoardBuilder3D } = await import('./scripts/board/BoardBuilder3D.js');
-    const { Dice3D } = await import('./scripts/board/Dice3D.js');
-    const { Pawn3D } = await import('./scripts/board/Pawn3D.js');
-    const { PLAYER_COLORS } = await import('./scripts/board/BoardConfig.js');
-
-    const canvas = document.getElementById('webgl-canvas');
-    if (canvas) {
-      threeManager = new ThreeManager(canvas);
-      threeManager.init();
-
-      const builder = new BoardBuilder3D(threeManager.scene);
-      builder.buildBoard();
-
-      new Dice3D(threeManager.scene);
-
-      const pawns = [
-        { id: 'r1', color: PLAYER_COLORS.RED, pos: { x: -5.5, y: 0.3, z: -5.5 } },
-        { id: 'g1', color: PLAYER_COLORS.GREEN, pos: { x: 5.5, y: 0.3, z: -5.5 } },
-        { id: 'y1', color: PLAYER_COLORS.YELLOW, pos: { x: 5.5, y: 0.3, z: 5.5 } },
-        { id: 'b1', color: PLAYER_COLORS.BLUE, pos: { x: -5.5, y: 0.3, z: 5.5 } }
-      ];
-
-      pawns.forEach(p => {
-        const pawn = new Pawn3D(p.id, p.color, p.pos);
-        threeManager.scene.add(pawn.mesh);
-      });
-
-      threeManager.startRenderLoop();
-      console.log('💎 3D Scene setup finished successfully.');
+function showScreen(screenId) {
+  var screens = ['splash-screen', 'loading-screen', 'home-screen', 'game-screen'];
+  screens.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.style.display = (id === screenId) ? 'flex' : 'none';
     }
-  } catch (err) {
-    console.error('⚠️ 3D Setup Exception:', err);
+  });
+}
+
+var scene, camera, renderer;
+
+function init3D() {
+  var canvas = document.getElementById('webgl-canvas');
+  if (!canvas) {
+    console.error('❌ Canvas #webgl-canvas missing!');
+    return;
+  }
+  if (typeof THREE === 'undefined') {
+    console.error('❌ THREE library not loaded!');
+    return;
   }
 
-  // 1. Splash Screen Action
-  bindTouchAction('splash-screen', () => {
-    switchScreen('splash-screen', 'loading-screen');
+  try {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 15, 20);
+    camera.lookAt(0, 0, 0);
 
-    // Fast loading simulation without blocking promises
-    const bar = document.getElementById('loading-bar');
-    if (bar) bar.style.width = '100%';
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    setTimeout(() => {
-      switchScreen('loading-screen', 'home-screen');
-      const topBar = document.getElementById('top-bar');
-      if (topBar) topBar.style.display = 'flex';
-    }, 400);
-  });
+    var ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
 
-  // 2. Play Now Button Action
-  bindTouchAction('btn-play-now', () => {
-    console.log('🎮 PLAY NOW pressed! Opening 3D Board...');
-    switchScreen('home-screen', 'game-screen', 'block');
+    var dirLight = new THREE.DirectionalLight(0xffd700, 1.2);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
 
-    if (threeManager) {
-      threeManager.onWindowResize();
+    // Board Placeholder
+    var geometry = new THREE.BoxGeometry(10, 0.5, 10);
+    var material = new THREE.MeshStandardMaterial({ color: 0x00b894 });
+    var boardMesh = new THREE.Mesh(geometry, material);
+    scene.add(boardMesh);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
     }
-  });
+    animate();
+
+    console.log('💎 3D Context Initialized Successfully!');
+  } catch (err) {
+    console.error('❌ Error inside 3D setup:', err);
+  }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', startApp);
+// Bind events directly
+function setupInteractions() {
+  console.log('🚀 Setting up click interactions...');
+  init3D();
+
+  var splash = document.getElementById('splash-screen');
+  if (splash) {
+    splash.onclick = function() {
+      console.log('👉 Splash Clicked!');
+      showScreen('loading-screen');
+
+      setTimeout(function() {
+        showScreen('home-screen');
+        var topBar = document.getElementById('top-bar');
+        if (topBar) topBar.style.display = 'flex';
+      }, 400);
+    };
+  }
+
+  var playBtn = document.getElementById('btn-play-now');
+  if (playBtn) {
+    playBtn.onclick = function(e) {
+      if (e) e.stopPropagation();
+      console.log('🎮 PLAY NOW Clicked!');
+      
+      showScreen('game-screen');
+
+      if (renderer && camera) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+    };
+  }
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setupInteractions();
 } else {
-  startApp();
+  document.addEventListener('DOMContentLoaded', setupInteractions);
 }
