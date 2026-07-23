@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - GAME SESSION MANAGER (DEBUGGED)
+   CRYSTAL PARCHEESI STAR - GAME SESSION MANAGER (DEBUGGED & SAFE)
    ========================================================================== */
 
 import { PLAYER_COLORS } from '../board/BoardConfig.js';
@@ -34,15 +34,15 @@ export class GameSession {
     });
   }
 
-  /**
-   * Safe Alias to ensure start() or startSession() never throws undefined error
-   */
   start() {
     this.isActive = true;
-    console.log(`🎮 Game Session Started in ${this.mode} mode.`);
+    console.log(`🎮 Game Session Active: ${this.mode}`);
     return true;
   }
 
+  /**
+   * Safe Alias for master.js compatibility
+   */
   startSession() {
     return this.start();
   }
