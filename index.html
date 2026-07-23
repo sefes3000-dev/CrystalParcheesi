@@ -5,11 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Crystal Parcheesi STAR 3D</title>
   
-  <!-- Eruda Mobile Console -->
+  <!-- Eruda Mobile Dev Console -->
   <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-  <script>if (typeof eruda !== 'undefined') eruda.init();</script>
+  <script>
+    if (typeof eruda !== 'undefined') {
+      eruda.init();
+      console.log('🛠️ Eruda Active');
+    }
+    
+    // التقاط أي خطأ في تحميل السكريبتات فوراً
+    window.addEventListener('error', function(e) {
+      console.error('❌ Direct Script Load Error:', e.message || e);
+    }, true);
+  </script>
 
-  <!-- Three.js Engine -->
+  <!-- Three.js Engine Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <link rel="stylesheet" href="styles.css">
@@ -26,10 +36,10 @@
   </div>
 
   <!-- 1. Splash Screen -->
-  <div id="splash-screen" class="screen">
+  <div id="splash-screen" class="screen" style="display: flex;">
     <div class="splash-content">
       <h1 class="game-title">CRYSTAL PARCHEESI<br><span>STAR 3D</span></h1>
-      <p style="font-size: 1.2rem; color: #aaa;">اضغط في أي مكان للبدء</p>
+      <p style="font-size: 1.2rem; color: #00f0ff; margin-top: 20px;">اضغط في أي مكان للبدء 🎲</p>
     </div>
   </div>
 
@@ -50,7 +60,7 @@
     </div>
   </div>
 
-  <!-- Native Master Bootstrap -->
-  <script src="master.js"></script>
+  <!-- Master Entry Script with fallback onerror logging -->
+  <script src="./master.js" onerror="console.error('❌ Failed to load ./master.js! Check if file exists in root directory.')"></script>
 </body>
 </html>
