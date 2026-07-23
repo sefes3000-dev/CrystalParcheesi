@@ -1,0 +1,10 @@
+{
+  "usernames": [
+    "Sultan_Parchisi", "Khafaji_99", "Sarah_VIP", "Ahmad_Pro",
+    "King_Ludo", "Desert_Falcon", "Crown_Player", "Alex_Gamer",
+    "Shadow_Knight", "Elena_R", "Tariq_10", "Luna_Star"
+  ],
+  "countries": ["SA", "AE", "EG", "MA", "US", "GB", "BR", "IN", "DE", "FR"],
+  "avatars": ["avatar_1", "avatar_2", "avatar_3", "avatar_4", "avatar_5"],
+  "personalities": ["Aggressive", "Defensive", "Balanced", "Strategic", "Risky"]
+}
