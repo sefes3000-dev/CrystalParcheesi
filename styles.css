@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - STYLES & LAYERING SYSTEM
+   CRYSTAL PARCHEESI STAR - FIXED UI & TOUCH INTERACTION STYLES
    ========================================================================== */
 
 * {
@@ -8,6 +8,7 @@
   padding: 0;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body, html {
@@ -15,11 +16,11 @@ body, html {
   height: 100%;
   overflow: hidden;
   background-color: #0b0e14;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   color: #ffffff;
 }
 
-/* WebGL Canvas Viewport Layer */
+/* WebGL Canvas Background Layer */
 #webgl-canvas {
   position: absolute;
   top: 0;
@@ -28,9 +29,10 @@ body, html {
   height: 100vh;
   z-index: 1;
   display: block;
+  pointer-events: auto;
 }
 
-/* UI Overlay Screen Management */
+/* Screen Management System */
 .screen {
   position: absolute;
   top: 0;
@@ -42,104 +44,71 @@ body, html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(11, 14, 20, 0.85);
-  backdrop-filter: blur(12px);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  pointer-events: none;
-}
-
-.screen.active {
+  background: rgba(11, 14, 20, 0.88);
   opacity: 1;
   pointer-events: auto;
 }
 
 #game-screen {
   background: transparent !important;
-  backdrop-filter: none !important;
   pointer-events: none;
+  z-index: 5;
 }
 
-/* Top Navigation Bar */
-.top-bar {
-  position: absolute;
-  top: 15px;
-  left: 0;
-  width: 100%;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 20;
+/* Interactive Elements Force Touch */
+.btn-primary, button, #splash-screen, #home-screen {
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  cursor: pointer;
 }
 
-.user-profile, .resources {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  border-radius: 20px;
-  backdrop-filter: blur(8px);
-}
-
-/* Game Title & UI Components */
 .game-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
   color: #00f0ff;
-  text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+  margin-bottom: 20px;
 }
 
 .btn-primary {
-  padding: 16px 40px;
-  font-size: 1.5rem;
+  padding: 18px 45px;
+  font-size: 1.4rem;
   font-weight: bold;
   color: #fff;
   background: linear-gradient(135deg, #ff007f, #7928ca);
   border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.4);
-  transition: transform 0.2s, box-shadow 0.2s;
-  pointer-events: auto;
+  border-radius: 35px;
+  box-shadow: 0 4px 15px rgba(255, 0, 127, 0.5);
+  margin-top: 15px;
 }
 
 .btn-primary:active {
   transform: scale(0.95);
 }
 
-.loading-bar-container {
-  width: 280px;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  overflow: hidden;
-  margin: 15px 0;
-}
-
-.loading-bar {
-  width: 0%;
-  height: 100%;
-  background: #00f0ff;
-  transition: width 0.3s ease;
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 20;
+  pointer-events: none;
 }
 
 .game-hud {
   position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  bottom: 25px;
+  width: 100%;
+  text-align: center;
   pointer-events: none;
 }
 
 .turn-indicator {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px 24px;
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px 20px;
   border-radius: 20px;
   font-weight: bold;
   color: #ff4757;
