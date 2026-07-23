@@ -1,0 +1,96 @@
+{
+  "categories": ["dice", "pawns", "frames", "characters", "flowers", "emojis"],
+  "items": [
+    {
+      "id": "dice_classic",
+      "category": "dice",
+      "name": "Classic Dice",
+      "description": "The traditional white wooden dice.",
+      "rarity": "Common",
+      "price": 0,
+      "currency": "coins",
+      "isPremium": false,
+      "model3D": "assets/models/dice/dice_classic.glb",
+      "previewImage": "assets/images/icons/dice_classic.png",
+      "isVisible": true
+    },
+    {
+      "id": "dice_crystal",
+      "category": "dice",
+      "name": "Crystal Blue Dice",
+      "description": "Forged from icy blue magical crystal.",
+      "rarity": "Rare",
+      "price": 7000,
+      "currency": "coins",
+      "isPremium": false,
+      "model3D": "assets/models/dice/dice_crystal.glb",
+      "previewImage": "assets/images/icons/dice_crystal.png",
+      "isVisible": true
+    },
+    {
+      "id": "dice_dragon",
+      "category": "dice",
+      "name": "Dragon Flame Dice",
+      "description": "Burns with the power of an ancient dragon.",
+      "rarity": "Legendary",
+      "price": 250,
+      "currency": "gems",
+      "isPremium": true,
+      "model3D": "assets/models/dice/dice_dragon.glb",
+      "previewImage": "assets/images/icons/dice_dragon.png",
+      "isVisible": true
+    },
+    {
+      "id": "pawn_classic",
+      "category": "pawns",
+      "name": "Classic Pawn",
+      "description": "Standard acrylic Parchisi pawn.",
+      "rarity": "Common",
+      "price": 0,
+      "currency": "coins",
+      "isPremium": false,
+      "model3D": "assets/models/pawns/pawn_classic.glb",
+      "previewImage": "assets/images/icons/pawn_classic.png",
+      "isVisible": true
+    },
+    {
+      "id": "pawn_samurai",
+      "category": "pawns",
+      "name": "Golden Samurai Pawn",
+      "description": "Armored pawn crafted for warriors.",
+      "rarity": "Epic",
+      "price": 15000,
+      "currency": "coins",
+      "isPremium": false,
+      "model3D": "assets/models/pawns/pawn_samurai.glb",
+      "previewImage": "assets/images/icons/pawn_samurai.png",
+      "isVisible": true
+    },
+    {
+      "id": "frame_classic",
+      "category": "frames",
+      "name": "Bronze Frame",
+      "description": "Simple wooden avatar border.",
+      "rarity": "Common",
+      "price": 0,
+      "currency": "coins",
+      "isPremium": false,
+      "model3D": null,
+      "previewImage": "assets/images/frames/frame_classic.png",
+      "isVisible": true
+    },
+    {
+      "id": "frame_crystal",
+      "category": "frames",
+      "name": "Royal Crystal Frame",
+      "description": "Glowing animated crystal border.",
+      "rarity": "Legendary",
+      "price": 120,
+      "currency": "gems",
+      "isPremium": false,
+      "model3D": null,
+      "previewImage": "assets/images/frames/frame_crystal.png",
+      "isVisible": true
+    }
+  ]
+}
