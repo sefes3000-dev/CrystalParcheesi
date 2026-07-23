@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - THREE.JS ENGINE MANAGER
+   CRYSTAL PARCHEESI STAR - THREE.JS ENGINE MANAGER (SAFE RENDER LOOP FIX)
    ========================================================================== */
 
 export class ThreeManager {
@@ -9,15 +9,24 @@ export class ThreeManager {
     this.camera = null;
     this.renderer = null;
     this.isRendering = false;
+    this.animationFrameId = null;
   }
 
   init() {
+    if (!this.canvas) {
+      console.error('❌ ThreeManager: Canvas element is missing or null!');
+      return;
+    }
+
     // 1. Scene Setup
     this.scene = new THREE.Scene();
 
     // 2. Camera Setup
+    const width = window.innerWidth || 300;
+    const height = window.innerHeight || 300;
     const fov = 45;
-    const aspect = window.innerWidth / window.innerHeight;
+    const aspect = width / height;
+
     this.camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
     this.camera.position.set(0, 15, 20);
     this.camera.lookAt(0, 0, 0);
@@ -30,22 +39,25 @@ export class ThreeManager {
       powerPreference: "high-performance"
     });
     
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
+    this.renderer.setSize(width, height);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // 4. Lighting Setup
     this.setupLighting();
 
-    // 5. Handle Resize
+    // 5. Initial Render Force (Render initial frame before animation loop starts)
+    this.renderFrame();
+
+    // 6. Handle Resize
     window.addEventListener('resize', () => this.onWindowResize());
 
     console.log('💎 Three.js WebGL Engine Initialized Successfully.');
   }
 
   setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     this.scene.add(ambientLight);
 
     const dirLight = new THREE.DirectionalLight(0xffd700, 1.2); // Golden Directional Light
@@ -60,25 +72,55 @@ export class ThreeManager {
     this.scene.add(pointLight);
   }
 
-  startRenderLoop(updateCallback) {
+  renderFrame() {
+    if (this.renderer && this.scene && this.camera) {
+      this.renderer.render(this.scene, this.camera);
+    }
+  }
+
+  startRenderLoop(updateCallback = null) {
+    if (this.isRendering) return; // Prevent duplicate requestAnimationFrame loops
+    
     this.isRendering = true;
+
     const animate = () => {
       if (!this.isRendering) return;
-      requestAnimationFrame(animate);
-      if (updateCallback) updateCallback();
-      this.renderer.render(this.scene, this.camera);
+
+      if (typeof updateCallback === 'function') {
+        try {
+          updateCallback();
+        } catch (err) {
+          console.error('⚠️ Error in render updateCallback:', err);
+        }
+      }
+
+      this.renderFrame();
+      this.animationFrameId = requestAnimationFrame(animate);
     };
+
     animate();
   }
 
   stopRenderLoop() {
     this.isRendering = false;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
   }
 
   onWindowResize() {
     if (!this.camera || !this.renderer) return;
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    if (width === 0 || height === 0) return;
+
+    this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    this.renderer.setSize(width, height);
+    this.renderFrame(); // Instantly update view frame on resize
   }
 }
