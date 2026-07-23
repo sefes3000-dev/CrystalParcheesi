@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - GAME SESSION MANAGER (DEBUGGED & SAFE)
+   CRYSTAL PARCHEESI STAR - GAME SESSION MANAGER
    ========================================================================== */
 
 import { PLAYER_COLORS } from '../board/BoardConfig.js';
@@ -40,9 +40,6 @@ export class GameSession {
     return true;
   }
 
-  /**
-   * Safe Alias for master.js compatibility
-   */
   startSession() {
     return this.start();
   }
