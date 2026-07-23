@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - Phase 2: Three.js Graphics Engine & 3D Showroom Completed
+### Added
+- Central decoupled event management bus (`EventBus.js`).
+- Three.js WebGL graphics manager with lights, shadow map, and mobile optimizations (`ThreeManager.js`).
+- Interactive 3D Showroom platform with podium base and smooth rotation (`Showroom3D.js`).
+- Integrated 3D engine animation render loop into `master.js`.
+
 ## [0.2.0] - Phase 1: Modular JSON Databases & Save Engine Completed
 ### Added
 - JSON data structures for `shop.json`, `profile.json`, and `bots.json`.
