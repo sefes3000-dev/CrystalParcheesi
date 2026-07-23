@@ -1,8 +1,9 @@
 /* ==========================================================================
-   CRYSTAL PARCHEESI STAR - GAME SESSION MANAGER
+   CRYSTAL PARCHEESI STAR - GAME SESSION MANAGER (DEBUGGED)
    ========================================================================== */
 
-import { BotAI } from '../ai/BotAI.js';
+import { PLAYER_COLORS } from '../board/BoardConfig.js';
+import { BotAI } from './BotAI.js';
 
 export const GAME_MODES = {
   OFFLINE_BOTS: 'OFFLINE_BOTS',
@@ -13,24 +14,51 @@ export const GAME_MODES = {
 export class GameSession {
   constructor(mode = GAME_MODES.OFFLINE_BOTS) {
     this.mode = mode;
-    this.bots = {};
-    this.initSession();
+    this.isActive = false;
+    this.players = [
+      { id: 'player_1', color: PLAYER_COLORS.RED, isBot: false },
+      { id: 'bot_green', color: PLAYER_COLORS.GREEN, isBot: true },
+      { id: 'bot_yellow', color: PLAYER_COLORS.YELLOW, isBot: true },
+      { id: 'bot_blue', color: PLAYER_COLORS.BLUE, isBot: true }
+    ];
+    this.botInstances = new Map();
+    this.initBots();
   }
 
-  initSession() {
-    if (this.mode === GAME_MODES.OFFLINE_BOTS) {
-      // Assign Bot AI to Green, Yellow, and Blue players
-      this.bots['GREEN'] = new BotAI('MEDIUM');
-      this.bots['YELLOW'] = new BotAI('MEDIUM');
-      this.bots['BLUE'] = new BotAI('EASY');
-    }
+  initBots() {
+    this.botInstances.clear();
+    this.players.forEach(player => {
+      if (player.isBot) {
+        this.botInstances.set(player.color, new BotAI(player.color, 'MEDIUM'));
+      }
+    });
+  }
+
+  /**
+   * Safe Alias to ensure start() or startSession() never throws undefined error
+   */
+  start() {
+    this.isActive = true;
+    console.log(`🎮 Game Session Started in ${this.mode} mode.`);
+    return true;
+  }
+
+  startSession() {
+    return this.start();
   }
 
   isBotTurn(playerColor) {
-    return !!this.bots[playerColor];
+    if (!this.isActive) return false;
+    const player = this.players.find(p => p.color === playerColor);
+    return player ? player.isBot : false;
   }
 
   getBotInstance(playerColor) {
-    return this.bots[playerColor] || null;
+    return this.botInstances.get(playerColor) || null;
+  }
+
+  reset() {
+    this.isActive = false;
+    this.initBots();
   }
 }
