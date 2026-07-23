@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - Phase 5: Bot AI & Online/Offline Session Logic Completed
+### Added
+- Rule-based Bot AI decision engine with simulated thinking delays (`BotAI.js`).
+- Flexible Game Session Manager supporting offline bot matches and pass-and-play (`GameSession.js`).
+- Automatic bot turn loop integration with 3D dice rolling animations in `master.js`.
+
 ## [0.5.0] - Phase 4: Parchisi Rule Engine & Turn System Completed
 ### Added
 - Core Parchisi rule verification module for safe zones, pawn release, captures, and bonus turns (`GameRules.js`).
