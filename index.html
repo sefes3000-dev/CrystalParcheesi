@@ -5,16 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Crystal Parcheesi STAR 3D</title>
   
-  <!-- 1. Eruda Console -->
+  <!-- Eruda Mobile Console -->
   <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-  <script>
-    if (typeof eruda !== 'undefined') {
-      eruda.init();
-      console.log('🛠️ Eruda Active');
-    }
-  </script>
+  <script>if (typeof eruda !== 'undefined') eruda.init();</script>
 
-  <!-- 2. Three.js Engine Library -->
+  <!-- Three.js Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <link rel="stylesheet" href="styles.css">
@@ -24,53 +19,38 @@
   <!-- WebGL Canvas Context -->
   <canvas id="webgl-canvas"></canvas>
 
-  <!-- Top Resource Bar -->
+  <!-- Top Bar -->
   <div id="top-bar" class="top-bar" style="display: none;">
-    <div class="user-profile">
-      <div class="avatar">👤</div>
-      <span id="player-name">Player</span>
-    </div>
-    <div class="resources">
-      <div class="resource-item">🪙 <span id="coin-count">0</span></div>
-      <div class="resource-item">💎 <span id="gem-count">0</span></div>
-    </div>
+    <div class="user-profile">👤 <span id="player-name">Player</span></div>
+    <div class="resources">🪙 <span id="coin-count">0</span></div>
   </div>
 
   <!-- 1. Splash Screen -->
-  <div id="splash-screen" class="screen active">
+  <div id="splash-screen" class="screen">
     <div class="splash-content">
       <h1 class="game-title">CRYSTAL PARCHEESI<br><span>STAR 3D</span></h1>
-      <p class="tap-hint">اضغط هنا للبدء</p>
+      <p style="font-size: 1.2rem; color: #aaa;">اضغط في أي مكان للبدء</p>
     </div>
   </div>
 
   <!-- 2. Loading Screen -->
   <div id="loading-screen" class="screen" style="display: none;">
-    <div class="loading-container">
-      <h2>جاري التحميل...</h2>
-      <div class="loading-bar-container">
-        <div id="loading-bar" class="loading-bar"></div>
-      </div>
-      <p id="loading-status">تهيئة المحرك...</p>
-    </div>
+    <h2>جاري التحميل...</h2>
   </div>
 
-  <!-- 3. Main Menu -->
+  <!-- 3. Main Menu Screen -->
   <div id="home-screen" class="screen" style="display: none;">
-    <div class="menu-container">
-      <h2 class="menu-title">القائمة الرئيسية</h2>
-      <button id="btn-play-now" class="btn-primary play-btn">إبدأ اللعب الآن 🎲</button>
-    </div>
+    <button id="btn-play-now" class="btn-primary">إبدأ اللعب الآن 🎲</button>
   </div>
 
-  <!-- 4. Game Screen -->
+  <!-- 4. 3D Game Screen -->
   <div id="game-screen" class="screen" style="display: none;">
     <div class="game-hud">
-      <div class="turn-indicator" id="turn-indicator">دورك الآن (الأحمر)</div>
+      <div class="turn-indicator">رقعة اللعب 3D جاهزة!</div>
     </div>
   </div>
 
-  <!-- Master Entry Script (Explicit Relative Path) -->
-  <script type="module" src="./master.js"></script>
+  <!-- Native Master Bootstrap -->
+  <script src="master.js"></script>
 </body>
 </html>
